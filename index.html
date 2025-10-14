@@ -1,12 +1,119 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=ventana_de_cambio_claro_filtrado.html">
-    <title>Redireccionando...</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cálculo Ventana de Cambio — Claro Colombia</title>
+  <meta name="description" content="Formulario interno para calcular fecha de entrega y ventana de cambio con recomendación de operador logístico.">
+  <style>
+    :root{
+      --claro-red:#ED1C24;
+      --ink-900:#111827;
+      --ink-700:#374151;
+      --ink-500:#6B7280;
+      --border:#E5E7EB;
+      --bg:#F9FAFB;
+      --card:#FFFFFF;
+      --radius:12px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--ink-900);}
+    header{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border);background:#fff;position:sticky;top:0;z-index:10}
+    .brand{display:flex;align-items:center;gap:.75rem}
+    .logo{width:40px;height:40px;border-radius:50%;background:var(--claro-red);display:grid;place-items:center;color:#fff;font-weight:700}
+    .title{font-size:1.1rem;margin:0;font-weight:800;color:var(--claro-red)}
+    main{max-width:980px;margin:1.25rem auto;padding:0 1rem}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem}
+    h2{margin:.25rem 0 1rem 0;font-size:1.15rem}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem;margin-top:.75rem}
+    .field{margin:.25rem 0 1rem}
+    label.field-label{display:block;font-weight:700;margin-bottom:.35rem}
+    input[type="search"]{width:100%;padding:.7rem .8rem;border:1px solid var(--border);border-radius:10px;font-size:1rem;background:#fff}
+    input:focus{outline:3px solid rgba(237,28,36,.35);outline-offset:2px}
+    .muted{color:var(--ink-500)}
+    .value{font-weight:600;color:var(--ink-700)}
+    #lista-ciudades{list-style:none;margin:.25rem 0 0 0;padding:0;border:1px solid var(--border);border-radius:10px;max-height:280px;overflow:auto;background:#fff;position:absolute;width:min(660px,calc(100% - 2rem));box-shadow:0 8px 24px rgba(0,0,0,.08)}
+    #lista-ciudades[hidden]{display:none}
+    #lista-ciudades li{padding:.6rem .8rem;cursor:pointer}
+    #lista-ciudades li:hover{background:#FFF1F2}
+    #lista-ciudades li.is-active{background:#FFF1F2}
+    mark{background:#FFE4E4;padding:0 .1em;border-radius:3px}
+    .search-wrap{position:relative}
+    .help{font-size:.9rem;color:var(--ink-500);margin-top:.25rem}
+    .sr-only{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    footer{margin:1rem auto;max-width:980px;color:var(--ink-500);padding:0 1rem}
+  </style>
 </head>
 <body>
-    <p>Redireccionando al aplicativo de Ventana de Cambio...</p>
+  <header role="banner">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">C</div>
+      <h1 class="title">Cálculo Ventana de Cambio — Claro Colombia</h1>
+    </div>
+  </header>
+  <main role="main">
+    <section class="card" aria-labelledby="calc-title">
+      <h2 id="calc-title">Cálculo ventana de cambio</h2>
+      <div class="field search-wrap">
+        <label for="ciudad" class="field-label">Ciudad de destino</label>
+        <input id="ciudad" name="ciudad" type="search" placeholder="Escribe la ciudad" autocomplete="off" aria-autocomplete="list" aria-controls="lista-ciudades" aria-expanded="false" />
+        <ul id="lista-ciudades" role="listbox" hidden></ul>
+        <p class="help">Empieza a escribir y el sistema irá autocompletando (tolerante a mayúsculas y tildes).</p>
+      </div>
+      <div class="grid" aria-live="polite">
+        <div><p class="field-label">Departamento</p><p id="dpto" class="value">—</p></div>
+        <div><p class="field-label">Operador logístico</p><p id="operador" class="value">—</p></div>
+        <div><p class="field-label">Fecha de entrega</p><p id="entrega" class="value">—</p></div>
+        <div><p class="field-label">Ventana de cambio</p><p id="ventana" class="value">—</p></div>
+        <div><p class="field-label">⏱️ Consulta</p><p id="consulta" class="value">—</p></div>
+      </div>
+    </section>
+    <section class="card" aria-labelledby="recos-title" style="margin-top:1rem">
+      <h3 id="recos-title" style="margin:.25rem 0 1rem 0">Recomendaciones</h3>
+      <ul>
+        <li>Confirmar la dirección capturada y recordar al cliente que recibirá un SMS o correo electrónico para validarla.</li>
+        <li>Antes de solicitar un serial al operador logístico, preguntar al cliente qué equipo tiene y validar si soporta tecnología E‑SIM.</li>
+        <li>Realizar seguimiento a todos los pedidos para asegurar una entrega efectiva y mejorar la experiencia del cliente.</li>
+      </ul>
+      <p class="muted">© Claro Colombia — Uso interno</p>
+    </section>
+  </main>
+  <div class="sr-only" aria-live="polite" id="live"></div>
+  <footer>
+    <small class="muted">Este formulario espera archivos en <code>/data</code>: <code>ciudades.json</code>, <code>efectividad.json</code> y <code>festivos_co.json</code>.</small>
+  </footer>
+  <script type="module">
+    const AUTOCOMPLETE = { minChars: 1, maxItems: 8, debounceMs: 120 };
+    const CUTOFF_HOUR = 15;
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => [...document.querySelectorAll(sel)];
+    const $city = $('#ciudad'), $list = $('#lista-ciudades'), $dpto = $('#dpto'), $op = $('#operador'), $ent = $('#entrega'), $ven = $('#ventana'), $ts = $('#consulta'), $live = $('#live');
+    const normalize = (s='') => s.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim();
+    const debounce = (fn, ms) => { let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); }; };
+    const fmtFecha = (d) => d.toLocaleDateString('es-CO', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    const isWeekend = (d) => [0,6].includes(d.getDay());
+    const isHoliday = (d, set) => set.has(d.toISOString().slice(0,10));
+    const plusDays = (d, n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+    const addBusinessDays = (start, days, holidaySet) => { const dt = new Date(start); while(days>0){ dt.setDate(dt.getDate()+1); if(!isWeekend(dt) && !isHoliday(dt, holidaySet)) days--; } return dt; };
+    const announce = (msg) => { $live.textContent = msg; };
+    const blockedKeys = new Set([ `${normalize('granada')}|${normalize('meta')}` ]);
+    async function loadJSON(url){ try{ const r = await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error(r.statusText); return await r.json(); } catch{ return null; } }
+    const [ciudadesRaw, efectividadRaw, festivosRaw] = await Promise.all([ loadJSON('data/ciudades.json'), loadJSON('data/efectividad.json'), loadJSON('data/festivos_co.json') ]);
+    const data = { ciudades:Array.isArray(ciudadesRaw)?ciudadesRaw:[], efectividad:Array.isArray(efectividadRaw)?efectividadRaw:[], festivos:Array.isArray(festivosRaw)?festivosRaw:[] };
+    const festivosSet = new Set(data.festivos.map(x=>String(x)));
+    const ciudadesIdx = data.ciudades.filter(c=>!blockedKeys.has(`${normalize(c.ciudad)}|${normalize(c.departamento)}`)).map(c=>({ ...c, key:normalize(c.ciudad), keyDepto:`${normalize(c.ciudad)}|${normalize(c.departamento)}` }));
+    let activeIndex=-1, filteredCache=[];
+    function matchRank(nameNorm, queryNorm){ if(nameNorm.startsWith(queryNorm))return 0; const words=nameNorm.split(/\s+/); if(words.some(w=>w.startsWith(queryNorm)))return 1; if(nameNorm.includes(queryNorm))return 2; return 9; }
+    function highlightMatch(textOriginal, queryNorm){ const nameNorm=normalize(textOriginal); const idx=nameNorm.indexOf(queryNorm); if(idx===-1||!queryNorm)return textOriginal; const start=idx,end=idx+queryNorm.length; return textOriginal.slice(0,start)+"<mark>"+textOriginal.slice(start,end)+"</mark>"+textOriginal.slice(end); }
+    function renderList(items, queryNorm){ $list.innerHTML=''; activeIndex=-1; items.slice(0,AUTOCOMPLETE.maxItems).forEach((c,i)=>{ const li=document.createElement('li'); li.role='option'; li.id=`opt-${i}`; li.tabIndex=-1; li.setAttribute('aria-selected','false'); li.innerHTML=`${highlightMatch(`${c.ciudad}`,queryNorm)} — ${c.departamento}`; li.addEventListener('click',()=>{ selectCity(c); $list.hidden=true; $city.setAttribute('aria-expanded','false'); }); $list.appendChild(li); }); $list.hidden=items.length===0; $city.setAttribute('aria-expanded',String(!$list.hidden)); announce(`${Math.min(items.length,AUTOCOMPLETE.maxItems)} resultado(s). Usa flechas y Enter.`); }
+    function moveActive(delta){ const options=$$('#lista-ciudades li[role="option"]'); if(!options.length)return; activeIndex=(activeIndex+delta+options.length)%options.length; options.forEach((el,idx)=>{ const isActive=idx===activeIndex; el.setAttribute('aria-selected',String(isActive)); el.classList.toggle('is-active',isActive); if(isActive)el.scrollIntoView({block:'nearest'}); }); }
+    function chooseActive(){ if(activeIndex<0)return; const options=$$('#lista-ciudades li[role="option"]'); const el=options[activeIndex]; if(!el)return; const i=Number(el.id.replace('opt-','')); const item=filteredCache[i]; if(item){ selectCity(item); $list.hidden=true; $city.setAttribute('aria-expanded','false'); } }
+    const onInput=debounce(()=>{ const raw=$city.value||''; const q=normalize(raw); if(q.length<AUTOCOMPLETE.minChars){ $list.hidden=true; filteredCache=[]; $city.setAttribute('aria-expanded','false'); return; } const matches=ciudadesIdx.filter(c=>c.key.includes(q)).map(c=>({c,r:matchRank(c.key,q)})).sort((a,b)=>a.r-b.r||a.c.ciudad.localeCompare(b.c.ciudad)).map(x=>x.c); filteredCache=matches; renderList(matches,q); },AUTOCOMPLETE.debounceMs);
+    $city.addEventListener('input',onInput);
+    document.addEventListener('click',(e)=>{ if(!e.target.closest('#lista-ciudades')&&e.target!==$city){ $list.hidden=true; $city.setAttribute('aria-expanded','false'); } });
+    $city.addEventListener('keydown',(e)=>{ if($list.hidden)return; switch(e.key){ case'ArrowDown':e.preventDefault();moveActive(+1);break; case'ArrowUp':e.preventDefault();moveActive(-1);break; case'Enter':e.preventDefault();chooseActive();break; case'Escape':$list.hidden=true;$city.setAttribute('aria-expanded','false');break; } });
+    function selectCity(c){ const key=`${normalize(c.ciudad)}|${normalize(c.departamento)}`; if(blockedKeys.has(key)){ alert('Esta ciudad no está disponible para cálculo. Por favor, elige otra.'); return; } $city.value=c.ciudad; $dpto.textContent=c.departamento??'—'; const now=new Date(); $ts.textContent=now.toLocaleString('es-CO'); const after3pm=now.getHours()>=CUTOFF_HOUR; let coberturaSet=null; if(Array.isArray(c.cobertura))coberturaSet=new Set(c.cobertura.map(x=>String(x))); let candidatos=Array.isArray(data.efectividad)?data.efectividad.filter(r=>{ const sameCity=normalize(r.ciudad||'')===normalize(c.ciudad||''); const sameDept=(r.departamento)?normalize(r.departamento)===normalize(c.departamento):true; const covered=coberturaSet?coberturaSet.has(String(r.operador)):true; return sameCity&&sameDept&&covered; }):[]; candidatos.sort((a,b)=>(Number(b.efectividad||0)-Number(a.efectividad||0))||(Number(b.volumen||0)-Number(a.volumen||0))); const recomendado=candidatos[0]?.operador||(Array.isArray(c.cobertura)?c.cobertura[0]:'—'); $op.textContent=recomendado??'—'; const lead=Number(c.leadTimeDias)||0; const startBase=after3pm?plusDays(now,1):now; const entrega=addBusinessDays(startBase,lead,festivosSet); $ent.textContent=isNaN(entrega)?'—':fmtFecha(entrega); const offsetVentana=1+(after3pm?1:0); const ventana=plusDays(entrega,offsetVentana); $ven.textContent=isNaN(ventana)?'—':fmtFecha(ventana); }
+    if(!ciudadesIdx.length){ announce('No hay datos de ciudades cargados. Sube /data/ciudades.json para activar el autocompletado.'); }
+  </script>
 </body>
 </html>
